@@ -20,12 +20,12 @@ class Console {
     private Equation $equation;
 
     public function __construct()
-	{
+    {
         $this->arguments = new Arguments();
         $this->equation = new Equation($this->arguments);
         $this->result = $this->equation->start();
         $this->output();
-	}
+    }
 
     /**
      * Output result if exists
