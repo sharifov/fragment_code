@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kvado\Calculations\Recalculation\LowQuality;
+namespace Calculations\Recalculation\LowQuality;
 
 use App\Db\Pure\Models\HousesCards;
 use App\Db\Pure\Models\RecalculationsLowQuality\RecalculationsLowQuality;
@@ -194,8 +194,14 @@ class RecalculationsLowQualityRepository
         return $utilities;
     }
 
-    public function getAlreadyLowQualityPeriods(int $houseCardId, int $typeId, int $recalculationId = 0): array
-    {
+    public function getAlreadyLowQualityPeriods(
+        int $houseCardId,
+        int $typeId,
+        int $utilityId,
+        int $accountUsageId,
+        int $organizationId,
+        int $recalculationId = 0
+    ): array {
         $criteria = new CDbCriteria();
         $criteria->with = [
             RecalculationsLowQualityPeriodsStructure::REL_RECALCULATIONS_LOW_QUALITY,
@@ -210,6 +216,18 @@ class RecalculationsLowQualityRepository
         $criteria->compare(
             RecalculationsLowQualityStructure::COL_TYPE_ID,
             $typeId
+        );
+        $criteria->compare(
+            RecalculationsLowQualityStructure::COL_UTILITY_ID,
+            $utilityId
+        );
+        $criteria->compare(
+            RecalculationsLowQualityStructure::COL_ACCOUNTS_USAGE_TYPE_ID,
+            $accountUsageId
+        );
+        $criteria->compare(
+            RecalculationsLowQualityStructure::COL_ORGANIZATION_ID,
+            $organizationId
         );
         if ($recalculationId) {
             $criteria->addCondition(
@@ -256,7 +274,7 @@ class RecalculationsLowQualityRepository
                 $attrs['dateTo'] = $end->format('d.m.Y');
                 $attrs['timeFrom'] = $begin->format('H:i');
                 $attrs['timeTo'] = $end->format('H:i');
-                $attrs['recalculationCoefficient'] = $period->day_coefficient <> '';
+                $attrs['recalculationCoefficient'] = $period->temperature_in_act == null;
                 $result[] = $attrs;
             }
         }
